@@ -1,11 +1,11 @@
 <?php
 
 	/*
-	
+
 	author : nguyen minh tan
 	email : nguyenminhtan893@gmail.com
-	
-	*/ 
+
+	*/
 	session_start();
 	require_once('./apps/commons/connection.php');
 	require_once('./apps/commons/env.php');

@@ -1,4 +1,4 @@
-<?php 
+<?php
 class UserModel{
 
 	public $id;
@@ -30,7 +30,7 @@ class UserModel{
 		//hàm kiểm tra form đăng ký
 	public function Validate($UserModel){
 		$error = 0;
-		$db = DB::GetDB();
+		$db = DB::GetDb();
 		$stmt = $db->prepare("select username from users where username = '$UserModel->username'");
 		$stmt->execute();
 		if($stmt->rowCount()){
@@ -45,7 +45,6 @@ class UserModel{
 			$error++;
 		}
 		if($UserModel->friend!=""){
-			echo $UserModel->friend;
 			if(preg_match('/[@]/', $friend)){
 				$stmt = $db->prepare("select email from users where email = '$UserModel->friend'");
 				$stmt->execute();
@@ -84,7 +83,7 @@ class UserModel{
 
 
 	public function Save($UserModel){
-		$db = Db::GetDB();
+		$db = Db::GetDb();
 		$stmt = $db->prepare("insert into users(id,username,email,phone,fullname,password,friend,avatar,intro,user_level,time)
 			values(null,:username,:email,:phone,:fullname,:password,:friend,:avatar,:intro,2,now())");
 		$stmt->bindParam(':username',$UserModel->username,PDO::PARAM_STR);
@@ -101,7 +100,7 @@ class UserModel{
 
 		//kiểm tra đăng nhập bằng email
 	public function EmailExist($UserModel){
-		$db = Db::GetDB();
+		$db = Db::GetDb();
 		$stmt = $db->prepare("select id, username ,password ,user_level from users where email = :email");
 		$stmt->bindParam(':email',$UserModel->email,PDO::PARAM_STR);
 		$stmt->execute();
@@ -114,11 +113,11 @@ class UserModel{
 				return false;
 			}
 		}
-	}	
+	}
 
 	//kiểm tra update
 	public static function EmailUpdate($email){
-		$db = DB::GetDB();
+		$db = DB::GetDb();
 		$stmt = $db->prepare("select email from users where email = '$email'");
 		$stmt->execute();
 		if($stmt->rowCount() >0){
@@ -129,7 +128,7 @@ class UserModel{
 	}
 	//kiểm tra update
 	public static function UsernameUpdate($username){
-		$db = DB::GetDB();
+		$db = DB::GetDb();
 		$stmt = $db->prepare("select username from users where username = '$username'");
 		$stmt->execute();
 		if($stmt->rowCount() >0){
@@ -140,7 +139,7 @@ class UserModel{
 	}
 	//kiểm tra update
 	public static function PhoneUpdate($phone){
-		$db = DB::GetDB();
+		$db = DB::GetDb();
 		$stmt = $db->prepare("select phone from users where phone = '$phone'");
 		$stmt->execute();
 		if($stmt->rowCount() >0){
@@ -152,7 +151,7 @@ class UserModel{
 
 	//kiểm tra đăng nhập bằng username
 	public function UserNameExist($UserModel){
-		$db = Db::GetDB();
+		$db = Db::GetDb();
 		$stmt = $db->prepare("select id,password ,user_level from users where username = :username");
 		$stmt->bindParam(':username',$UserModel->username,PDO::PARAM_STR);
 		$stmt->execute();
@@ -169,7 +168,7 @@ class UserModel{
 
 	//GEt Level
 	public function GetLevel($UserModel){
-		$db = Db::GetDB();
+		$db = Db::GetDb();
 		$stmt = $db->prepare("select user_level from users where id = :id");
 		$stmt->bindParam(':id',$UserModel->id,PDO::PARAM_INT);
 		$stmt->execute();
@@ -179,7 +178,7 @@ class UserModel{
 
 	//Get all user
 	public static function GetAll(){
-		$db = Db::GetDB();
+		$db = Db::GetDb();
 		$stmt = $db->prepare("select id
 								from users	");
 		$stmt->execute();
@@ -187,11 +186,11 @@ class UserModel{
 	}
 	//Get User List
 	public static function GetUser($start , $limit , $order){
-		
-		$db = Db::GetDB();
-		$stmt = $db->prepare("select id , fullname , email , time , user_level , avatar 
+
+		$db = Db::GetDb();
+		$stmt = $db->prepare("select id , fullname , email , time , user_level , avatar
 								from users
-								order by $order DESC limit :start , :limit  
+								order by $order DESC limit :start , :limit
 			");
 		$stmt->bindParam(':start',$start,PDO::PARAM_INT);
 		$stmt->bindParam(':limit',$limit,PDO::PARAM_INT);
@@ -201,10 +200,10 @@ class UserModel{
 
 	//kiểm tra id có tồn tại không
 	public static function idExist($id){
-		$db = Db::GetDB();
-		$stmt = $db->prepare("select user_level 
+		$db = Db::GetDb();
+		$stmt = $db->prepare("select user_level
 								from users
-								where id = '$id'  
+								where id = '$id'
 			");
 		$stmt->execute();
 		if($stmt->rowCount()>0){
@@ -214,12 +213,25 @@ class UserModel{
 			return false;
 		}
 	}
+	//Get Id
+	public static function GetId($string){
+		$db = Db::GetDb();
+		if(preg_match('/[@]/', $string)){
+			$stmt = $db->prepare("select id from users where email = '$string'");
+		}else{
+			$stmt = $db->prepare("select id from users where username = '$string'");
+		}
+		$stmt->execute();
+		$arr =  $stmt->fetch();
+		return $arr['id'];
+	}
+
 	//Del
 	public static function Del($id){
-		$db = Db::GetDB();
-		$stmt = $db->prepare("delete  
+		$db = Db::GetDb();
+		$stmt = $db->prepare("delete
 								from users
-								where id = '$id'  
+								where id = '$id'
 			");
 		$stmt->execute();
 	}
@@ -227,10 +239,10 @@ class UserModel{
 	//lấy ra 1 user đểchỉnh sửa
 
 	public static function GetOne($id){
-		$db = Db::GetDB();
-		$stmt = $db->prepare("select id , username, fullname,email,phone,avatar,intro,user_level , sex 
+		$db = Db::GetDb();
+		$stmt = $db->prepare("select id , username, fullname,email,phone,avatar,birthday,intro,user_level , sex
 								from users
-								where id = '$id'  
+								where id = '$id'
 			");
 		$stmt->execute();
 		return $stmt->fetch();
@@ -239,10 +251,10 @@ class UserModel{
 	//Update
 
 	public static function Update($id,$username,$phone,$fullname, $sex,$birthday,$email,$intro,$level,$avatar){
-		$db = Db::GetDB();
+		$db = Db::GetDb();
 		$stmt = $db->prepare("update users set username = '$username' , phone = '$phone' , fullname ='$fullname',
 								email = '$email' , sex = '$sex' , birthday = '$birthday' , intro = '$intro' , user_level ='$level' , avatar = '$avatar'
-								where id = '$id'  
+								where id = '$id'
 			");
 		$stmt->execute();
 	}

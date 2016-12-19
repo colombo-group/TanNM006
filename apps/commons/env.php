@@ -1,3 +1,3 @@
-<?php 
-	$base = "http://localhost/Tt/TanNM006";
+<?php
+	$base = "http://localhost/TanNM006";
 ?>

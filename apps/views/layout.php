@@ -1,3 +1,4 @@
+	
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +7,7 @@
 	<link rel="stylesheet" href="<?=$base ?>/apps/public/css/style.css">
 </head>
 <body>
-	
+
 	<header id="header">
 		<div class="container">
 
@@ -15,7 +16,7 @@
 			</div><!--end logo-->
 
 			<nav>
-			<?php 
+			<?php
 				if(isset($_SESSION['user']) && $_SESSION['user'] !=""){ ?>
 					<span><a href="<?=$base ?>?ctr=User&act=N&name="><?=$_SESSION['username'] ?>  |</a></span>
 					<span><a href="<?=$base ?>?ctr=User&act=LogOut">Đăng xuất</a></span>

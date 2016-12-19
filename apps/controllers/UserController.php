@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 class UserController{
 
@@ -37,7 +37,7 @@ class UserController{
 			$pageLimit = ((int)($userLimit / $limit))+1;
 		}
 		require_once('apps/views/index.php');
-	} 
+	}
 
 	//hàm đăng ký
 	public static function Register(){
@@ -51,10 +51,10 @@ class UserController{
 		$_SESSION['Register_password'] = null;
 		$_SESSION['Register_username'] = null;
 		$_SESSION['Register_email'] = null;
-		$_SESSION['Register_friend'] = null;	
+		$_SESSION['Register_friend'] = null;
 
 		$error = 0;
-			//validate form 
+			//validate form
 		$username = $_POST['username'];
 		$email = $_POST['email'];
 		$phone = $_POST['phone'];
@@ -63,10 +63,9 @@ class UserController{
 		$password = $_POST['password'];
 		$rePassword = $_POST['repassword'];
 		$pass = password_hash($password , PASSWORD_DEFAULT);
-
 		if(preg_match('/[^0-9]/', $password)){
 			$_SESSION['Register_password'] = 'mật khẩu nhập không đúng!';
-			header('location: ../User/Register');
+			header('location: ..?ctr=User&act=Register');
 		}
 			if(!isset($_POST['id'])){//thêm mới
 				if(self::Validate($username , $email , $phone ,$friend) ==false){
@@ -78,7 +77,7 @@ class UserController{
 				$error++;;
 			}
 			if($error!=0){
-				header('location: ../User/Register');
+				header('location: ../?ctr=User&act=Register');
 			}
 			else{
 				//upload avatar
@@ -90,7 +89,9 @@ class UserController{
 					$_FILES['avatar']['name'] = $folder.$_FILES['avatar']['name'];
 				}
 				//Lưu uses
-				$user = new UserModel(null,$username,$email,$phone,$fullName,$pass,null,$friend,$_FILES['avatar']['name'],2,null);
+				//lấy id của friend
+				$friendId = UserModel::GetId($friend);
+				$user = new UserModel(null,$username,$email,$phone,$fullName,$pass,null,$friendId,$_FILES['avatar']['name'],2,null);
 				if($user->Save($user)){
 					$_SESSION['Register_phone'] = null;
 					$_SESSION['Register_password'] = null;
@@ -104,7 +105,7 @@ class UserController{
 
 
 		}
-		
+
 
 	//Hàm xác nhận form đăng ký
 		public static function Validate($username , $email , $phone , $friend){
@@ -133,10 +134,8 @@ class UserController{
 							header('location: ./');
 						}
 						else{
-							session_destroy();
-
 							$_SESSION['login_error'] = 'Email hoặc mật khẩu không đúng!';
-							header('location: ../User/login');
+							header('location: ./?ctr=User&act=Login');
 						}
 					}
 					else{//username
@@ -149,9 +148,8 @@ class UserController{
 							header('location: ./');
 						}
 						else{
-							session_decode();
 							$_SESSION['login_error'] = 'Tên đăng nhập hoặc mật khẩu không đúng!';
-							header('location: ../User/Login');
+							header('location: ./?ctr=User&act=Login');
 						}
 					}
 				}
@@ -169,7 +167,7 @@ class UserController{
 			if(isset($_GET['Id'])){
 				$id = $_GET['Id'];
 				//kiểm tra id xem có đúng k
-				$check = UserModel::idExist($id); 
+				$check = UserModel::idExist($id);
 				if($check!=false){
 				//Kiểm tra quyền xóa
 					//echo $_SESSION['user_level'];
@@ -177,7 +175,7 @@ class UserController{
 						UserModel::Del($id);
 						header('location: ./');
 					}
-					else{	
+					else{
 						header('location: ./');
 					}
 				}
@@ -193,7 +191,7 @@ class UserController{
 			if(isset($_GET['Id'])){
 				$id = $_GET['Id'];
 				//kiểm tra id xem có đúng k
-				$check = UserModel::idExist($id); 
+				$check = UserModel::idExist($id);
 				if($check!=false){
 				//Kiểm tra quyền xóa
 					//echo $_SESSION['user_level'];
@@ -202,7 +200,7 @@ class UserController{
 						$user = UserModel::GetOne($id);
 						require_once('./apps/views/update.php');
 					}
-					else{	
+					else{
 						header('location: ./');
 					}
 				}
@@ -221,10 +219,9 @@ class UserController{
 				$birthday = $_POST['birthday'];
 				$intro = $_POST['intro'];
 				$fullname = $_POST['full_name'];
-				
+
 				//lấy ra các dữ liệu cũ để so sánh
 				$user = UserModel::GetOne($id);
-				print_r($user);
 				$error = 0;
 				if($username != $user['username']){
 					if(!UserModel::UsernameUpdate($username)){
@@ -252,11 +249,30 @@ class UserController{
 						move_uploaded_file($_FILES['avatar']['tmp_name'],$folder.$_FILES['avatar']['name']);
 						$_FILES['avatar']['name'] = $folder.$_FILES['avatar']['name'];
 						$user['avatar'] = $_FILES['avatar']['name'];
-				}	
+				}
 					UserModel::Update($id,$username,$phone,$fullname, $sex,$birthday,$email,$intro,$user_level,$user['avatar']);
+					header('location: ./');
 				}
 			}
-		}	
+		}
+
+		//hàm hiển thị chi tiết thành viên
+		public static function Name(){
+			if (isset($_GET['id'])) {
+				//Kiểm tra id có tồn
+				$id= $_GET['id'];
+				if(UserModel::idExist($id) !=false){
+					//Lấy ra thông tin thành viên
+					$user = UserModel::GetOne($id);
+					require_once('./apps/views/detail.php');
+				}
+				else{
+					header('location: ./');
+				}
+			}
+		}
+
+
 	}
 
 	?>

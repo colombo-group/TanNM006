@@ -1,6 +1,6 @@
 	<div class="login">
 			<h2>Register</h2>
-			<form action="http://localhost/Tt/TanNM006/?ctr=User&act=Save"  method="post" enctype="multipart/form-data">
+			<form action="?ctr=User&act=Save"  method="post" enctype="multipart/form-data">
 				<label >ảnh đại diện :</label>
 				<input type="file" name='avatar' accept="image/*" />
 				<input type="text" placeholder="họ tên " name='full_name' required /><br/>

@@ -1,8 +1,9 @@
+
 	<div class="container">
 	<div id="content">
 		<!-- <p id='user-limit'>123 users</p> -->
 		<div id='num'>
-			<form action="http://localhost/Tt/TanNM006/?ctr=User&act=Index" method='GET' >
+			<form action="?ctr=User&act=Index" method='GET' >
 				<input type="hidden" value='<?=$page ?>' name='page'>
 				<label >Hiển thị :</label>
 				<select name="limit" id="limit">
@@ -23,24 +24,24 @@
 
 		<ul id='userList'>
 			<?php
-				$arr = ['Admin' , 'Mod' , 'User']; 
+				$arr = ['Admin' , 'Mod' , 'User'];
 			foreach ($userList as $user ): ?>
 				<li>
 					<div class="avatar">
-						<?php 
+						<?php
 							if($user['avatar'] !=""){
-								echo "<img src='http://localhost/Tt/TanNM006/".$user['avatar']."' alt='avatar' />";
+								echo "<img src='".$user['avatar']."' alt='avatar' />";
 							}
 						?>
 					</div><!--end avatar-->
 					<div class="username">
-						<a href='#' class="name"><?=$user['fullname'] ?></a>
+						<a href='?ctr=User&act=Name&id=<?=$user['id'] ?>' class="name"><?=$user['fullname'] ?></a>
 						<p class="email"><?=substr($user['time'] , 0 ,10) ?></p>
 					</div><!--end username-->
 					<div class="role">
 						<button class='role-button'><?=$arr[$user['user_level']] ?></button>
 					</div><!--end role-->
-					<?php 
+					<?php
 						if((int)$user['user_level'] > (int)$_SESSION['user_level']){ ?>
 							<div class="optional">
 							<a href="?ctr=User&act=Del&Id=<?=$user['id'] ?>" id='del'>Del</a>
@@ -48,27 +49,26 @@
 					</div><!--end user optional-->
 						<?php }
 					?>
-					
+
 				</li>
 			<?php endforeach ?>
 		</ul>
 		<div id="paginator">
 			<ul>
-				<?php 
+				<?php
 					if($page>1){
-				
-						echo "<li><a href='http://localhost/Tt/TanNM006/?ctr=User&act=Index&page=".($page-1)."'>prev</a></li>";
+
+						echo "<li><a href='?ctr=User&act=Index&page=".($page-1)."'>prev</a></li>";
 					}
 				?>
-				<?php 
-					for ($i=1; $i <=$pageLimit ; $i++)  { ?> 
-							<li><a href="http://localhost/Tt/TanNM006?ctr=User&act=Index&page=<?=$i; ?>"><?=$i; ?></a></li>
+				<?php
+					for ($i=1; $i <=$pageLimit ; $i++)  { ?>
+							<li><a href="?ctr=User&act=Index&page=<?=$i; ?>"><?=$i; ?></a></li>
 					<?php }
 				?>
-				<?php 
+				<?php
 					if($page < $pageLimit){
-				
-						echo "<li><a href='http://localhost/Tt/TanNM006?ctr=User&act=Index&page=".($page+1)."'>next</a></li>";
+						echo "<li><a href='?ctr=User&act=Index&page=".($page+1)."'>next</a></li>";
 					}
 				?>
 			</ul>
